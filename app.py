@@ -6,21 +6,36 @@ tree = joblib.load('AI_Camp.pkl')
 forest = joblib.load('RandomForest.pkl')
 X_test, Y_test = joblib.load('test_data.pkl')
 
-tree_accuracy = tree.score(X_test, Y_test)
-forest_accuracy = forest.score(X_test, Y_test)
-
 FastFood = pd.read_csv("https://raw.githubusercontent.com/himayatulmillah/Nutrition-Fact-for-Menu-of-McDonald/refs/heads/main/menu_mcd.csv")
 features = FastFood.drop(columns=['Category', 'Item', 'Serving Size'])
 
 st.title("🍔 What Category Is This Food?")
 
-col1, col2 = st.columns(2)
-col1.metric("Decision Tree Accuracy", f"{tree_accuracy:.0%}")
-col2.metric("Random Forest Accuracy", f"{forest_accuracy:.0%}")
+# ===== ACCURACY SECTION (commented out for now) =====
+# tree_accuracy = tree.score(X_test, Y_test)
+# forest_accuracy = forest.score(X_test, Y_test)
+# col1, col2 = st.columns(2)
+# col1.metric("Decision Tree Accuracy", f"{tree_accuracy:.0%}")
+# col2.metric("Random Forest Accuracy", f"{forest_accuracy:.0%}")
+# st.write("---")
 
-st.write("---")
+# Filter by Serving Size
+serving_choice = st.selectbox("Filter by Serving Size", ["All"] + sorted(FastFood['Serving Size'].unique()))
 
-item_name = st.selectbox("Pick a menu item", FastFood['Item'])
+if serving_choice == "All":
+    filtered_by_serving = FastFood
+else:
+    filtered_by_serving = FastFood[FastFood['Serving Size'] == serving_choice]
+
+# Filter by Category too
+category_choice = st.selectbox("Filter by Category", ["All"] + sorted(filtered_by_serving['Category'].unique()))
+
+if category_choice == "All":
+    filtered_items = filtered_by_serving
+else:
+    filtered_items = filtered_by_serving[filtered_by_serving['Category'] == category_choice]
+
+item_name = st.selectbox("Pick a menu item", filtered_items['Item'])
 
 if st.button("Predict Category"):
     row = features[FastFood['Item'] == item_name].iloc[[0]]
