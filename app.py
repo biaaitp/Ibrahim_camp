@@ -23,17 +23,9 @@ st.title("🍔 What Category Is This Food?")
 serving_choice = st.selectbox("Filter by Serving Size", ["All"] + sorted(FastFood['Serving Size'].unique()))
 
 if serving_choice == "All":
-    filtered_by_serving = FastFood
+    filtered_items = FastFood
 else:
-    filtered_by_serving = FastFood[FastFood['Serving Size'] == serving_choice]
-
-# Filter by Category too
-category_choice = st.selectbox("Filter by Category", ["All"] + sorted(filtered_by_serving['Category'].unique()))
-
-if category_choice == "All":
-    filtered_items = filtered_by_serving
-else:
-    filtered_items = filtered_by_serving[filtered_by_serving['Category'] == category_choice]
+    filtered_items = FastFood[FastFood['Serving Size'] == serving_choice]
 
 item_name = st.selectbox("Pick a menu item", filtered_items['Item'])
 
